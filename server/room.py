@@ -1,4 +1,3 @@
-import json
 import logging
 from abc import ABCMeta, abstractmethod
 from typing import List
@@ -36,16 +35,14 @@ class GameRoom(metaclass=ABCMeta):
 
     async def wait_for_user_input(self, player: Player) -> PlayerAction:
         try:
-            player_action_data = await asyncio.wait_for(player.connection.recv(), timeout=1)
+            player_action_data = await asyncio.wait_for(player.connection.get_user_action(), timeout=3)
             return PlayerAction(player, player_action_data)
         except asyncio.TimeoutError as e:
             print("TIMEOUT", e, "for", player.login)
             return PlayerAction(player, None)
-        except Exception as e:
-            logging.exception(f"EXCEPTION {e} for {player.login}")
 
     async def get_player_actions(self) -> list:
-        await asyncio.wait([player.connection.send(json.dumps(self.state)) for player in self.players])
+        await asyncio.wait([player.connection.send_state(self.state) for player in self.players])
         return await asyncio.gather(*[self.wait_for_user_input(player) for player in self.players])
 
     async def start(self) -> None:
@@ -57,7 +54,6 @@ class GameRoom(metaclass=ABCMeta):
             logging.info(f"Player actions {players_actions}")
             self.play(players_actions)
             logging.info(f"State {self.state}")
-            await asyncio.sleep(1)
 
         # on finish
         logging.info("GAME WAS FINISHED")
@@ -82,7 +78,8 @@ class PrisonsDilemmaGameRoom(GameRoom):
 
         print("player_actions", player_actions)
         user_actions_mapping = {
-            action.player.login: action.data["decision"] for action in player_actions if action.data is not None}
+            action.player.login: action.data["decision"] if action.data is not None else True
+            for action in player_actions}
 
         self.state['previous_user_actions'] = user_actions_mapping
 

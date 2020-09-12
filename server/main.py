@@ -4,6 +4,8 @@ import websockets
 import asyncio
 
 
+# TODO: FIX second player always TIMED OUT. first user start to play before second player connect!
+
 if __name__ == "__main__":
     server = GameServer(PrisonsDilemmaGameRoom)
     start_server = websockets.serve(server.ws_handler, 'localhost', 4000)

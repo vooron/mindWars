@@ -1,16 +1,13 @@
 from dataclasses import dataclass
 from typing import Optional
 
-import websockets
+from server.player_connection import PlayerConnection
 
 
+@dataclass
 class Player:
-    connection: websockets.WebSocketServerProtocol
+    connection: PlayerConnection
     login: str
-
-    def __init__(self, websocket: websockets.WebSocketServerProtocol, login: str):
-        self.connection = websocket
-        self.login = login
 
 
 @dataclass
