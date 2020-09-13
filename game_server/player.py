@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from server.player_connection import PlayerConnection
+from game_server.player_connection import PlayerConnection
 
 
 @dataclass

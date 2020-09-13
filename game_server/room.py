@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 
 class GameRoom(metaclass=ABCMeta):
     ROOM_SIZE: int = 2
-    MAX_ITERATIONS = 10
+    MAX_ITERATIONS = 100
 
     players: List[Player]
     is_finished: bool = False
@@ -63,45 +63,3 @@ class GameRoom(metaclass=ABCMeta):
         logging.info(self.state)
         for player in self.players:
             await player.connection.close(1000, "The game was finished.")
-
-
-class PrisonsDilemmaGameRoom(GameRoom):
-
-    def get_init_state(self) -> dict:
-        return dict(
-            scores={player.login: 0 for player in self.players},
-            previous_user_actions={  # True - cooperate
-                player.login: True for player in self.players
-            }
-        )
-
-    def play(self, player_actions: List[PlayerAction]) -> None:
-        first_player_name: str = self.players[0].login
-        second_player_name: str = self.players[1].login
-
-        print("player_actions", player_actions)
-        user_actions_mapping = {
-            action.player.login: action.data["decision"] if action.data is not None else True
-            for action in player_actions}
-
-        self.state['previous_user_actions'] = user_actions_mapping
-
-        if user_actions_mapping[first_player_name] and user_actions_mapping[second_player_name]:
-            # both cooperates
-            self.state['scores'][first_player_name] += 1
-            self.state['scores'][second_player_name] += 1
-        elif not user_actions_mapping[first_player_name] and user_actions_mapping[second_player_name]:
-            self.state['scores'][first_player_name] += 2
-            self.state['scores'][second_player_name] += 0
-        elif user_actions_mapping[first_player_name] and not user_actions_mapping[second_player_name]:
-            self.state['scores'][first_player_name] += 0
-            self.state['scores'][second_player_name] += 2
-        else:
-            self.state['scores'][first_player_name] += 0
-            self.state['scores'][second_player_name] += 0
-
-
-
-
-
-

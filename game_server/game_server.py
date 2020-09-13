@@ -25,7 +25,7 @@ class GameServer:
         self._rooms = list()
 
     def _is_auth_data_valid(self, auth_data: dict) -> bool:
-        if not auth_data.get("login") or not auth_data.get("password"):
+        if not auth_data.get("login"):  # or not auth_data.get("password"):
             return False
         return True
 

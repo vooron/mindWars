@@ -1,10 +1,9 @@
-from server.game_server import GameServer
-from server.room import PrisonsDilemmaGameRoom
-import websockets
 import asyncio
+import websockets
 
+from custom_game_rooms.prisons_dilemma_room import PrisonsDilemmaGameRoom
+from game_server.game_server import GameServer
 
-# TODO: FIX second player always TIMED OUT!
 
 if __name__ == "__main__":
     server = GameServer(PrisonsDilemmaGameRoom)
