@@ -13,8 +13,11 @@ You will realize only pure logic. The result of your games will be saved,
 so you can create a nice visualization, 
 or even analyze them to increase the performance of your AI.
 
-For now, there is only 1 game - [Prisoners Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) 
+For now, there is only 2 games: 
+[Prisoners Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) 
 with 2 default AI strategies (Random or An Eye for an Eye - Retaliating and Random).
+
+Worms and 1 default strategy.
  
 Feel free to realize your own. 
 What you need to know - the system works with parallel games 
@@ -24,9 +27,8 @@ This service can handle 1 and more users in the same game.
 
 Some ideas for you:
 1) Turn-based strategy
-2) Worms
-3) Tetris 
-4) etc.
+2) Tetris 
+3) etc.
 
 
 ## Pre-requirements
@@ -77,3 +79,6 @@ class RandomStrategy(Player):
 
 ## Usage example
 ![](docs/photo_usage_example.jpg)
+
+You can also create animations (as in WormsAnimation.ipynb).
+Here is animated game ![](docs/worm_fight.gif)

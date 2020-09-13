@@ -3,16 +3,21 @@ from multiprocessing import Pool
 import asyncio
 
 from custom_players.an_eye_for_an_eye_strategy import AnEyeForAnEyeStrategy
+from custom_players.random_direction import RandomDirectionStrategy
 from custom_players.random_player import RandomStrategy
 
 CONFIG = [
     dict(
-        client_class=AnEyeForAnEyeStrategy,
-        name="First User (An eye for an eye)"
+        client_class=RandomDirectionStrategy,
+        name="First Champ"
     ),
     dict(
-        client_class=RandomStrategy,
-        name="Second User (Random(30% True)"
+        client_class=RandomDirectionStrategy,
+        name="Second Champ"
+    ),
+    dict(
+        client_class=RandomDirectionStrategy,
+        name="Third Champ"
     )
 ]
 

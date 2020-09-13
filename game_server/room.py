@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
@@ -44,13 +45,14 @@ class GameRoom(metaclass=ABCMeta):
             player_action_data = await asyncio.wait_for(player.connection.get_user_action(), timeout=1)
             return PlayerAction(player, player_action_data)
         except asyncio.TimeoutError as e:
+            logging.warning(f"Timeout for player {player.login}")
             return PlayerAction(player, None)
 
     async def _get_players_actions(self) -> List[PlayerAction]:
         await asyncio.wait([player.connection.send_state(self.state) for player in self.players])
         return await asyncio.gather(*[self._wait_for_user_input(player) for player in self.players])
 
-    async def end_game(self, reason: str) -> None:
+    def end_game(self, reason: str) -> None:
         """Should be called in `play` method to stop the game before all iterations will be passed"""
         raise EndGameException(reason)
 
@@ -71,9 +73,15 @@ class GameRoom(metaclass=ABCMeta):
                     data=dict(action.data)
                 ) for action in players_actions])
 
-                self.play(players_actions)
+                try:
+                    self.play(players_actions)
+                except EndGameException:
+                    raise
+                except Exception as e:
+                    logging.exception(e)
+                    exit(-1)
 
-                states_history.append(dict(self.state))    # save copy to history
+                states_history.append(json.loads(json.dumps(self.state)))    # save copy to history
         except EndGameException as e:
             states_history.append(dict(self.state))
             end_game_message += str(e)
