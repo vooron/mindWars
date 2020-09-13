@@ -1,4 +1,6 @@
+import json
 from abc import ABCMeta, abstractmethod
+from datetime import datetime
 from typing import List
 
 import asyncio
@@ -35,19 +37,38 @@ class GameRoom(metaclass=ABCMeta):
             player_action_data = await asyncio.wait_for(player.connection.get_user_action(), timeout=1)
             return PlayerAction(player, player_action_data)
         except asyncio.TimeoutError as e:
-            print("!!! TIMEOUT", e, "for", player.login)
             return PlayerAction(player, None)
 
-    async def get_players_actions(self) -> list:
+    async def get_players_actions(self) -> List[PlayerAction]:
         await asyncio.wait([player.connection.send_state(self.state) for player in self.players])
         return await asyncio.gather(*[self.wait_for_user_input(player) for player in self.players])
 
     async def start(self) -> None:
+
+        actions_history = []
+        states_history = []
+
         # main game cycle
         for i in range(self.MAX_ITERATIONS):
             players_actions = await self.get_players_actions()
+
+            actions_history.append([dict(  # save copy to history
+                player_login=action.player.login,
+                data=dict(action.data)
+            ) for action in players_actions])
+
             self.play(players_actions)
+
+            states_history.append(dict(self.state))    # save copy to history
 
         # on finish
         for player in self.players:
             await player.connection.close(1000, "The game was finished.")
+
+        print(f"The game was finished with status: {self.state}")
+
+        with open(f"results/{datetime.now()}_result.json", 'w') as f:
+            json.dump(dict(
+                players_actions=actions_history,
+                states=states_history
+            ), f)
