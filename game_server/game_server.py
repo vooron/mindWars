@@ -1,15 +1,11 @@
-import asyncio
 import json
-import logging
 from typing import Type
 
+import asyncio
 import websockets
 
-from .player_connection import PlayerConnection
-
-logging.basicConfig(level=logging.INFO)
-
 from .player import Player
+from .player_connection import PlayerConnection
 from .room import GameRoom
 
 
@@ -33,7 +29,6 @@ class GameServer:
         return True
 
     async def register(self, websocket: websockets.WebSocketServerProtocol, connection: PlayerConnection) -> None:
-        logging.info("Register start")
         auth_raw = await websocket.recv()
         try:
             auth = json.loads(auth_raw)
@@ -45,27 +40,18 @@ class GameServer:
                 await websocket.close(1007, "User are not permitted to connect")
 
             self._queue.append(Player(connection, auth['login']))
-
-            logging.info(f"{websocket.remote_address} with name {auth['login']} connects.")
-        except Exception as e:
-            logging.exception("=======EEEEEXCEPTION", e)
+        except Exception:
             await websocket.close(1007, "Error while trying to authenticate.")
 
     async def try_create_new_room(self) -> None:
-        logging.info("try_create_new_room")
         if len(self._queue) >= self._room_type.ROOM_SIZE:
-            logging.info("try_create_new_room TRUE")
             room = self._room_type(self._queue[:self._room_type.ROOM_SIZE])
             self._rooms.append(room)
             self._queue = self._queue[self._room_type.ROOM_SIZE:]
-            logging.info("Room was created!")
             await room.start()
-            logging.info("try_create_new_room END")
 
     async def subscribe_to_messages(self, websocket: websockets.WebSocketServerProtocol, connection: PlayerConnection):
-        logging.info(f"Before subscribe {websocket}")
         async for message in websocket:
-            logging.info(f"message from {websocket}")
             await connection.retrieve_player_action(message)
 
     async def ws_handler(self, websocket: websockets.WebSocketServerProtocol, _: str) -> None:
