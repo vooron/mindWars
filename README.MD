@@ -1,5 +1,7 @@
 # Mind Wars
 
+**[Video presentation](https://biteable.com/watch/what-we-do-explainer-copy-2687891)**
+
 Are you a **programmer**, **data scientist**, or just an **enthusiast**?
 Wide common tasks are boring for you and you want to get a real challenge? 
 Create an algorithm that will achieve the best result and beat all your previous decisions. 
