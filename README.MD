@@ -75,5 +75,5 @@ class RandomStrategy(Player):
         )
 ``` 
 
-# Usage example
+## Usage example
 ![](docs/photo_usage_example.jpg)
