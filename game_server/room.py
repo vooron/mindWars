@@ -1,4 +1,5 @@
 import json
+import os
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import List
@@ -9,8 +10,6 @@ from .player import Player, PlayerAction
 
 
 class GameRoom(metaclass=ABCMeta):
-    ROOM_SIZE: int = 2
-    MAX_ITERATIONS = 100
 
     players: List[Player]
     is_finished: bool = False
@@ -67,8 +66,11 @@ class GameRoom(metaclass=ABCMeta):
 
         print(f"The game was finished with status: {self.state}")
 
+        if not os.path.exists('results'):
+            os.makedirs('results')
+
         with open(f"results/{datetime.now()}_result.json", 'w') as f:
             json.dump(dict(
                 players_actions=actions_history,
                 states=states_history
-            ), f)
+            ), f, indent=4)

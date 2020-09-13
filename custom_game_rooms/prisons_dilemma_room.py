@@ -4,7 +4,13 @@ from game_server.player import PlayerAction
 from game_server.room import GameRoom
 
 
-class PrisonsDilemmaGameRoom(GameRoom):
+class PrisonersDilemmaGameRoom(GameRoom):
+
+    # How many players are needed to start the game.
+    ROOM_SIZE: int = 2
+
+    # How many iterations the game will take.
+    MAX_ITERATIONS = 100
 
     def get_init_state(self) -> dict:
         return dict(
