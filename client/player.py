@@ -32,4 +32,3 @@ class Player(metaclass=ABCMeta):
         async with websockets.connect(f"ws://{hostname}:{port}") as websocket:
             await self.authenticate(websocket)
             await self.start(websocket)
-            print("Finish?", websocket.closed)

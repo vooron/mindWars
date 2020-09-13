@@ -4,7 +4,7 @@ import websockets
 import asyncio
 
 
-# TODO: FIX second player always TIMED OUT. first user start to play before second player connect!
+# TODO: FIX second player always TIMED OUT!
 
 if __name__ == "__main__":
     server = GameServer(PrisonsDilemmaGameRoom)
